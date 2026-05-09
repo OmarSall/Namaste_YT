@@ -1,13 +1,16 @@
 import './App.css';
 import Head from "./components/Head";
 import Body from "./components/Body";
+import {Provider} from "react-redux";
+import store from "./utils/store";
 
 function App() {
     return (
-        <div className="">
-            <Head/>
-            <Body/>
-            {/*
+        <Provider store={store}>
+            <div className="">
+                <Head/>
+                <Body/>
+                {/*
     Head
     Body
         SideBar
@@ -17,7 +20,8 @@ function App() {
             VideoContainer
                 VideoCard
     */}
-        </div>
+            </div>
+        </Provider>
     );
 }
 
