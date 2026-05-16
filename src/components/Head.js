@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import {
     HAMBURGER_ICON_URL,
     SEARCH_ICON_URL,
@@ -11,6 +11,8 @@ import {useDispatch} from "react-redux";
 
 const Head = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
     useEffect(() => {
         // API call
@@ -26,7 +28,9 @@ const Head = () => {
     const getSearchSuggestions = async () => {
         const data = await fetch(YOUTUBE_SEARCH_API+searchQuery);
         const json = await data.json();
-        console.log(json);
+        console.log(json[0]);
+        setSuggestions(json[1]);
+        console.log(suggestions);
     }
 
     const dispatch = useDispatch();
@@ -52,21 +56,37 @@ const Head = () => {
                     />
                 </a>
             </div>
-            <div className="col-span-10 mt-2 pr-36 text-center flex justify-center items-center">
-                <input
-                    className="w-1/2 py-2 border border-gray-300 rounded-l-full"
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button className="py-2 px-4 border border-gray rounded-r-full bg-gray-200">
-                    <img
-                        className="w-6"
-                        alt="search"
-                        src={SEARCH_ICON_URL}
+            <div className="col-span-10 flex justify-center items-center mt-2 -ml-52">
+                <div className="w-1/2 relative flex">
+                    <input
+                        className="w-full py-2 px-4 border border-gray-300 rounded-l-full focus:outline-none"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={() => setShowSuggestions(true)}
+                        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     />
-                </button>
+                    <button className="py-2 px-4 border border-gray-300 rounded-r-full bg-gray-100">
+                        <img
+                            className="w-6"
+                            alt="search"
+                            src={SEARCH_ICON_URL}
+                        />
+                    </button>
+                    {
+                        showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 z-50">
+                                <ul>
+                                    {suggestions.map((s) => (
+                                        <li key={s} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">{s}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )
+                    }
+                </div>
             </div>
+
             <div className="col-span-1">
                 <img
                     className="h-12 -mt-2 "
